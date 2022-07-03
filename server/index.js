@@ -19,6 +19,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 app.use('/api/v1/auth', require('./routes/auth.route'));
+app.use('/api/v1/user', require('./routes/user.route'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
