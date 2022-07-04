@@ -12,7 +12,7 @@ const authCtrl = {
     try {
       const { username, name, password, role } = req.body;
       if (!username || !name || !password || !role)
-        return res.status(400).json({ msg: 'Please provide every field.' });
+        return res.status(400).json({ msg: 'Fill out every field.' });
 
       const findUsername = await User.findOne({ username });
       if (findUsername)
@@ -41,7 +41,7 @@ const authCtrl = {
       res.cookie('learnify_rfToken', refreshToken, {
         httpOnly: true,
         path: '/api/v1/auth/refresh_token',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       return res.status(200).json({
@@ -62,7 +62,7 @@ const authCtrl = {
       const { username, password } = req.body;
 
       if (!username || !password)
-        return res.status(400).json({ msg: 'Please provide every field.' });
+        return res.status(400).json({ msg: 'Fill out every field.' });
 
       const user = await User.findOne({ username });
       if (!user)
@@ -78,14 +78,14 @@ const authCtrl = {
       res.cookie('learnify_rfToken', refreshToken, {
         httpOnly: true,
         path: '/api/v1/auth/refresh_token',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
       return res.status(200).json({
         accessToken,
         user: {
           ...user._doc,
-          kataSandi: '',
+          password: '',
         },
       });
     } catch (err) {
@@ -103,17 +103,18 @@ const authCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+
   refreshToken: async (req, res) => {
     try {
-      const rfToken = req.cookies.learnify_rfToken;
-      if (!rfToken)
-        return res.status(403).json({ msg: 'Invalid authentication.' });
+      const token = req.cookies.learnify_rfToken;
+      if (!token)
+        return res.status(400).json({ msg: 'Authentication failed.' });
 
-      const decoded = jwt.verify(rfToken, process.env.REFRESH_TOKEN_SECRET);
-      if (!decoded.id) return res.status(403).json({ msg: 'Invalid token.' });
+      const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+      if (!decoded.id) return res.status(400).json({ msg: 'Invalid token.' });
 
-      const user = await User.findById(decoded.id).select('-password');
-      if (!user) return res.status(403).json({ msg: 'User not found.' });
+      const user = await User.findOne({ _id: decoded.id }).select('-password');
+      if (!user) return res.status(404).json({ msg: 'User not found.' });
 
       const accessToken = generateAccessToken({ id: user._id });
 
@@ -125,12 +126,11 @@ const authCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  updateProfile: async (req, res) => {
+
+  editProfile: async (req, res) => {
     try {
       const { name, avatar } = req.body;
-
-      if (!name)
-        return res.status(400).json({ msg: "Name field can't be blank." });
+      if (!name) return res.status(400).json({ msg: 'Fill out name field.' });
 
       const user = await User.findOneAndUpdate(
         { _id: req.user._id },
@@ -143,7 +143,7 @@ const authCtrl = {
       if (!user) return res.status(404).json({ msg: 'User not found.' });
 
       return res.status(200).json({
-        msg: 'User profile updated.',
+        msg: 'Profile has been successfully updated.',
         user,
       });
     } catch (err) {

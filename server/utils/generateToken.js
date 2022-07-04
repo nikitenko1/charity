@@ -7,9 +7,7 @@ module.exports.generateAccessToken = (payload) => {
 };
 
 module.exports.generateRefreshToken = (payload) => {
-  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: '7d',
   });
-
-  return refreshToken;
 };

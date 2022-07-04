@@ -20,6 +20,7 @@ app.use(morgan('dev'));
 
 app.use('/api/v1/auth', require('./routes/auth.route'));
 app.use('/api/v1/user', require('./routes/user.route'));
+app.use('/api/v1/event', require('./routes/event.route'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

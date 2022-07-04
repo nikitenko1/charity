@@ -16,7 +16,6 @@ const EditProfileModal = ({
     avatar: '',
     role: '',
   });
-
   const [avatar, setAvatar] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -36,11 +35,11 @@ const EditProfileModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userData.nama) {
+    if (!userData.name) {
       return dispatch({
         type: GLOBAL_TYPES.ALERT,
         payload: {
-          errors: 'Field Name is required.',
+          errors: 'Name field is required.',
         },
       });
     }
@@ -53,7 +52,7 @@ const EditProfileModal = ({
 
   useEffect(() => {
     setUserData({
-      nama: auth.user?.name,
+      name: auth.user?.name,
       username: auth.user?.username,
       role: auth.user?.role,
       avatar: auth.user?.avatar,
@@ -68,7 +67,99 @@ const EditProfileModal = ({
           : 'opacity-0 pointer-events-none'
       } transition-[opacity] flex z-[999] items-center justify-center p-4 bg-[rgba(0,0,0,.7)]`}
     >
-      EditProfileModal
+      <div
+        ref={editProfileModalRef}
+        className={`bg-white w-full ${
+          openEditProfileModal ? 'translate-y-0' : '-translate-y-12'
+        } transition-[transform] max-w-[500px] rounded-md`}
+      >
+        <div className="border-b border-gray-300 px-5 py-4 flex items-center justify-between">
+          <h1>Edit Profile</h1>
+          <AiOutlineClose
+            onClick={() => setOpenEditProfileModal(false)}
+            className="cursor-pointer"
+          />
+        </div>
+        <div className="p-5">
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name" className="text-sm">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                autoComplete="off"
+                value={userData.name}
+                onChange={handleChange}
+                className="h-10 px-2 w-full border border-gray-300 rounded-md text-sm mt-3 outline-0"
+              />
+            </div>
+            <div className="mt-5">
+              <label htmlFor="username" className="text-sm">
+                Username
+              </label>
+              <input
+                disabled={true}
+                type="text"
+                id="username"
+                name="username"
+                autoComplete="off"
+                value={userData.username}
+                onChange={handleChange}
+                className="h-10 px-2 w-full border text-sm border-gray-300 rounded-md mt-3 outline-0"
+              />
+            </div>
+            <div className="mt-5">
+              <label htmlFor="role" className="text-sm">
+                Role
+              </label>
+              <input
+                disabled={true}
+                type="text"
+                id="role"
+                name="role"
+                autoComplete="off"
+                value={userData.role}
+                onChange={handleChange}
+                className="h-10 px-2 w-full border border-gray-300 rounded-md text-sm mt-3 outline-0"
+              />
+            </div>
+            <div className="mt-5">
+              <label htmlFor="username" className="text-sm">
+                Avatar
+              </label>
+              <div className="mt-3 flex gap-3">
+                <div className="w-24 h-20 rounded-md">
+                  <img
+                    src={avatar ? URL.createObjectURL(avatar) : userData.avatar}
+                    alt={userData.name}
+                    className="rounded-md w-full h-full object-cover"
+                  />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="username"
+                  onChange={handleChangeAvatar}
+                  className="h-10 px-2 text-sm w-full border border-gray-300 rounded-md outline-0"
+                />
+              </div>
+            </div>
+            <button
+              disabled={loading ? true : false}
+              className={`${
+                loading
+                  ? 'bg-sky-200 hover:bg-sky-200 cursor-auto'
+                  : 'bg-sky-400 hover:bg-sky-500 cursor-pointer'
+              } transition-[background] px-4 py-2 text-sm text-white rounde-md rounded-md mt-3`}
+            >
+              {loading ? <Loader /> : 'Save'}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
