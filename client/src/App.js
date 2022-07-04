@@ -11,6 +11,10 @@ import 'aos/dist/aos.css';
 const App = () => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(refreshToken());
+  }, [dispatch]);
+
   // Initializing AOS
   useEffect(() => {
     AOS.init({
@@ -20,10 +24,6 @@ const App = () => {
       delay: 50,
     });
   }, []);
-
-  useEffect(() => {
-    dispatch(refreshToken());
-  }, [dispatch]);
 
   return (
     <Router>
