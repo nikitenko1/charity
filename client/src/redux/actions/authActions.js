@@ -2,40 +2,6 @@ import { GLOBAL_TYPES } from './../types/globalTypes';
 import { getDataAPI, patchDataAPI, postDataAPI } from './../../utils/fetchData';
 import { uploadImages } from './../../utils/imageHelper';
 
-export const refreshToken = () => async (dispatch) => {
-  try {
-    const isAuthenticated = localStorage.getItem('islogged-ua');
-    if (!isAuthenticated) return;
-
-    if (isAuthenticated) {
-      dispatch({
-        type: GLOBAL_TYPES.ALERT,
-        payload: {
-          loading: true,
-        },
-      });
-
-      const res = await getDataAPI('auth/refresh_token');
-      dispatch({
-        type: GLOBAL_TYPES.AUTH,
-        payload: res.data,
-      });
-
-      dispatch({
-        type: GLOBAL_TYPES.ALERT,
-        payload: {},
-      });
-    }
-  } catch (err) {
-    dispatch({
-      type: GLOBAL_TYPES.ALERT,
-      payload: {
-        errors: err.response.data.msg,
-      },
-    });
-  }
-};
-
 export const register = (userData) => async (dispatch) => {
   try {
     dispatch({
@@ -46,7 +12,6 @@ export const register = (userData) => async (dispatch) => {
     });
 
     const res = await postDataAPI('auth/register', userData);
-
     dispatch({
       type: GLOBAL_TYPES.AUTH,
       payload: {
@@ -55,7 +20,7 @@ export const register = (userData) => async (dispatch) => {
       },
     });
 
-    localStorage.setItem('islogged-ua', 'true');
+    localStorage.setItem('charity_auth', 'true');
 
     dispatch({
       type: GLOBAL_TYPES.ALERT,
@@ -88,7 +53,7 @@ export const login = (userData) => async (dispatch) => {
       payload: res.data,
     });
 
-    localStorage.setItem('islogged-ua', 'true');
+    localStorage.setItem('charity_auth', 'true');
 
     dispatch({
       type: GLOBAL_TYPES.ALERT,
@@ -112,13 +77,33 @@ export const logout = () => async (dispatch) => {
       payload: {},
     });
 
-    localStorage.removeItem('islogged-ua');
+    localStorage.removeItem('charity_auth');
 
     dispatch({
       type: GLOBAL_TYPES.ALERT,
       payload: {
         success: res.data.msg,
       },
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        errors: err.response.data.msg,
+      },
+    });
+  }
+};
+
+export const refreshToken = () => async (dispatch) => {
+  const isAuthenticated = localStorage.getItem('charity_auth');
+  if (!isAuthenticated) return;
+
+  try {
+    const res = await getDataAPI('auth/refresh_token');
+    dispatch({
+      type: GLOBAL_TYPES.AUTH,
+      payload: res.data,
     });
   } catch (err) {
     dispatch({
@@ -152,6 +137,7 @@ export const editProfile = (userData, auth) => async (dispatch) => {
         accessToken: auth.accessToken,
       },
     });
+
     dispatch({
       type: GLOBAL_TYPES.ALERT,
       payload: {

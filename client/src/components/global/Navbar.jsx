@@ -136,7 +136,7 @@ const Navbar = () => {
   }, [openEventDetailModal]);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const checkIfClickedOutside = (e) => {
       if (
         openEditProfileModal &&
         editProfileModalRef.current &&
@@ -145,11 +145,10 @@ const Navbar = () => {
         setOpenEditProfileModal(false);
       }
     };
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener('mousedown', checkIfClickedOutside);
     return () =>
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', checkIfClickedOutside);
   }, [openEditProfileModal]);
 
   return (
@@ -236,7 +235,7 @@ const Navbar = () => {
                     >
                       <img
                         src={auth.user?.avatar}
-                        alt={auth.user?.nama}
+                        alt={auth.user?.name}
                         className="w-full h-full rounded-full object-cover"
                       />
                     </div>
