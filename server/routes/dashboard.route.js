@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const eventCtrl = require('./../controllers/eventCtrl');
+const dashboardCtrl = require('./../controllers/dashboardCtrl');
 const { isAuthenticated, authorizeRoles } = require('../middlewares/auth');
 
 // Express servers receive data from the client side through the req object
@@ -8,11 +8,15 @@ const { isAuthenticated, authorizeRoles } = require('../middlewares/auth');
 // req.query '/search'
 // use the req.body object to receive data through POST and PUT requests in the Express server
 
-router
-  .route('/')
-  .get(eventCtrl.getEvent)
-  .post(isAuthenticated, authorizeRoles('donor'), eventCtrl.createEvent);
+router;
+router.route('/home').get(dashboardCtrl.getHomeDashboard);
 
-router.route('/search').get(eventCtrl.searchEvent);
+router
+  .route('/donor')
+  .get(
+    isAuthenticated,
+    authorizeRoles('donor'),
+    dashboardCtrl.getDonorDashboard
+  );
 
 module.exports = router;
