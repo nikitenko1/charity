@@ -105,6 +105,28 @@ const eventCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+
+  searchEvent: async (req, res) => {
+    try {
+      const events = await Event.aggregate([
+        {
+          $match: { name: { $regex: req.query.event } },
+        },
+        {
+          $lookup: {
+            from: 'donors',
+            localField: 'user',
+            foreignField: 'user',
+            as: 'donor',
+          },
+        },
+        { $unwind: '$donor' },
+      ]);
+      return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 module.exports = eventCtrl;

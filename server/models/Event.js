@@ -48,7 +48,7 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    registrar: [
+    registry: [
       {
         type: mongoose.Types.ObjectId,
         ref: 'history',

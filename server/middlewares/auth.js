@@ -4,7 +4,7 @@ const { User } = require('./../models/User');
 module.exports.isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header('Authorization');
-    if (!token) return res.status(400).json({ msg: 'Autentikasi gagal.' });
+    if (!token) return res.status(400).json({ msg: 'Authentication failed.' });
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     if (!decoded.id)
