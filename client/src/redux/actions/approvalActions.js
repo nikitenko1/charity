@@ -1,25 +1,12 @@
 import { GLOBAL_TYPES } from './../types/globalTypes';
-import { EVENT_TYPES } from './../types/eventTypes';
+import { DONOR_TYPES } from './../types/donorTypes';
 import {
   getDataAPI,
   patchDataAPI,
-  postDataAPI,
   deleteDataAPI,
 } from './../../utils/fetchData';
 
-export const registerEvent = (id, auth) => async (dispatch) => {
-  try {
-  } catch (err) {
-    dispatch({
-      type: GLOBAL_TYPES.ALERT,
-      payload: {
-        errors: err.response.data.msg,
-      },
-    });
-  }
-};
-
-export const getEvent = () => async (dispatch) => {
+export const getUnverifiedDonor = (token) => async (dispatch) => {
   try {
     dispatch({
       type: GLOBAL_TYPES.ALERT,
@@ -27,12 +14,11 @@ export const getEvent = () => async (dispatch) => {
         loading: true,
       },
     });
-
-    const res = await getDataAPI('event');
+    const res = await getDataAPI('donor/unverified', token);
 
     dispatch({
-      type: EVENT_TYPES.GET_EVENT,
-      payload: res.data.events,
+      type: DONOR_TYPES.GET_UNVERIFIED_DONOR,
+      payload: res.data.donators,
     });
 
     dispatch({
@@ -48,3 +34,7 @@ export const getEvent = () => async (dispatch) => {
     });
   }
 };
+
+export const verifyDonor = (id, token) => async (dispatch) => {};
+
+export const rejectDonor = (id, token) => async (dispatch) => {};

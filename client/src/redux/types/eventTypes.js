@@ -1,0 +1,4 @@
+export const EVENT_TYPES = {
+  CREATE_EVENT: 'CREATE_EVENT',
+  GET_EVENT: 'GET_EVENT',
+};

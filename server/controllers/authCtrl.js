@@ -62,7 +62,9 @@ const authCtrl = {
       const { username, password } = req.body;
 
       if (!username || !password)
-        return res.status(400).json({ msg: 'Fill out every field.' });
+        return res
+          .status(400)
+          .json({ msg: 'Fill out all fields in this form.' });
 
       const user = await User.findOne({ username });
       if (!user)
@@ -130,7 +132,10 @@ const authCtrl = {
   editProfile: async (req, res) => {
     try {
       const { name, avatar } = req.body;
-      if (!name) return res.status(400).json({ msg: 'Fill out name field.' });
+      if (!name)
+        return res
+          .status(400)
+          .json({ msg: 'Fill out all fields in this form.' });
 
       const user = await User.findOneAndUpdate(
         { _id: req.user._id },
