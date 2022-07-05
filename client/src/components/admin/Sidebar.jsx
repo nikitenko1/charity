@@ -13,7 +13,48 @@ const Sidebar = () => {
   return (
     <div className="bg-sky-400 pt-[72px]">
       {auth.user?.role === 'admin' ? (
-        <>Admin</>
+        <>
+          <Link
+            to="/approval"
+            className={`block p-5 ${
+              page === 'approval' ? 'bg-sky-600' : undefined
+            } hover:bg-sky-800 transition-[background] cursor-pointer`}
+          >
+            <BsPatchCheckFill className="text-xl text-white" />
+          </Link>
+          <Link
+            to="/donor"
+            className={`block p-5 ${
+              page === 'donor' ? 'bg-sky-600' : undefined
+            } hover:bg-sky-800 transition-[background] cursor-pointer`}
+          >
+            <FaBuilding className="text-xl text-white" />
+          </Link>
+          <Link
+            to="/user"
+            className={`block p-5 ${
+              page === 'user' ? 'bg-sky-600' : undefined
+            } hover:bg-sky-800 transition-[background] cursor-pointer`}
+          >
+            <FaUser className="text-xl text-white" />
+          </Link>
+          <Link
+            to="/news"
+            className={`block p-5 ${
+              page === 'news' ? 'bg-sky-600' : undefined
+            } hover:bg-sky-800 transition-[background] cursor-pointer`}
+          >
+            <BiNews className="text-xl text-white" />
+          </Link>
+          <Link
+            to="/all_event"
+            className={`block p-5 ${
+              page === 'all_event' ? 'bg-sky-600' : undefined
+            } hover:bg-sky-800 transition-[background] cursor-pointer`}
+          >
+            <AiOutlineClockCircle className="text-xl text-white" />
+          </Link>
+        </>
       ) : (
         <>
           <Link
