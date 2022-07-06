@@ -11,7 +11,11 @@ const eventReducer = (state = initialState, action) => {
         ...state,
         data: action.payload,
       };
-
+    case EVENT_TYPES.DELETE_EVENT:
+      return {
+        ...state,
+        data: state.data.filter((item) => item._id !== action.payload),
+      };
     default:
       return state;
   }

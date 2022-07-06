@@ -16,7 +16,7 @@ const eventCtrl = {
         {
           $lookup: {
             from: 'histories',
-            let: { history_id: '$registrar' },
+            let: { history_id: '$registrant' },
             pipeline: [
               { $match: { $expr: { $in: ['$_id', '$$history_id'] } } },
               {
@@ -29,7 +29,7 @@ const eventCtrl = {
               },
               { $unwind: '$user' },
             ],
-            as: 'registrar',
+            as: 'registrant',
           },
         },
         {
@@ -122,6 +122,55 @@ const eventCtrl = {
         },
         { $unwind: '$donor' },
       ]);
+      return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  deleteEvent: async (req, res) => {
+    try {
+      const findEvent = await Event.find({
+        id: req.params.id,
+        user: req.user._id,
+      });
+      if (!findEvent) return res.status(404).json({ msg: 'Event not found.' });
+
+      const event = await Event.findByIdAndDelete(req.params.id);
+      if (!event) return res.status(404).json({ msg: 'Event not found.' });
+
+      return res.status(200).json({ msg: 'Event data has been deleted.' });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  getEventByDonor: async (req, res) => {
+    try {
+      const events = await Event.aggregate([
+        { $match: { user: req.user._id } },
+        {
+          $lookup: {
+            from: 'histories',
+            let: { history_id: '$registrant' },
+            pipeline: [
+              { $match: { $expr: { $in: ['$_id', '$$history_id'] } } },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'user',
+                  foreignField: '_id',
+                  as: 'user',
+                },
+              },
+              { $unwind: '$user' },
+            ],
+            as: 'registrant',
+          },
+        },
+        { $sort: { createdAt: -1 } },
+      ]);
+
       return res.status(200).json({ events });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

@@ -15,4 +15,16 @@ router
 
 router.route('/search').get(eventCtrl.searchEvent);
 
+router
+  .route('/:id')
+  .delete(
+    isAuthenticated,
+    authorizeRoles('donor', 'admin'),
+    eventCtrl.deleteEvent
+  );
+
+router
+  .route('/donor')
+  .get(isAuthenticated, authorizeRoles('donor'), eventCtrl.getEventByDonor);
+
 module.exports = router;
