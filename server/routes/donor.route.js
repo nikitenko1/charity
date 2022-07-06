@@ -14,9 +14,22 @@ router
 
 router
   .route('/unverified')
-  .get(
-    isAuthenticated,
-    authorizeRoles('admin'),
-    donorCtrl.getUnverifiedDonor
-  );
+  .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getUnverifiedDonor);
+router
+  .route('/verified')
+  .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getVerifiedDonor);
+
+router
+  .route('/:id')
+  .delete(isAuthenticated, authorizeRoles('admin'), donorCtrl.deleteDonor);
+
+router
+  .route('/accept/:id')
+  .patch(isAuthenticated, authorizeRoles('admin'), donorCtrl.verifiedDonor);
+router
+  .route('/reject/:id')
+  .delete(isAuthenticated, authorizeRoles('admin'), donorCtrl.rejectDonor);
+router
+  .route('/verified')
+  .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getVerifiedDonor);
 module.exports = router;

@@ -35,6 +35,35 @@ export const getUnverifiedDonor = (token) => async (dispatch) => {
   }
 };
 
-export const verifyDonor = (id, token) => async (dispatch) => {};
+export const verifyDonor = (id, token) => async (dispatch) => {
+  try {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        loading: true,
+      },
+    });
+
+    const res = await patchDataAPI(`donor/accept/${id}`, {}, token);
+    dispatch({
+      type: DONOR_TYPES.CHANGE_STATUS,
+      payload: id,
+    });
+
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        errors: err.response.data.msg,
+      },
+    });
+  }
+};
 
 export const rejectDonor = (id, token) => async (dispatch) => {};

@@ -4,13 +4,18 @@ import Layout from './../components/admin/Layout';
 import Loader from './../components/global/Loader';
 import NotFound from './../components/global/NotFound';
 import HeadInfo from '../utils/HeadInfo';
-import { getUnverifiedDonor } from './../redux/actions/approvalActions';
+import {
+  getUnverifiedDonor,
+  verifyDonor,
+  rejectDonor,
+} from './../redux/actions/approvalActions';
+import DonorDetailModal from './../components/modal/DonorDetailModal';
 
 const Approval = () => {
   const [openDonorDetailModal, setOpenDonorDetailModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
 
-  const donatorDetailModalRef = useRef();
+  const donorDetailModalRef = useRef();
   const dispatch = useDispatch();
   const { auth, alert, approval } = useSelector((state) => state);
 
@@ -30,8 +35,8 @@ const Approval = () => {
         /**
          * Alert if clicked on outside of element
          */
-        donatorDetailModalRef.current &&
-        !donatorDetailModalRef.current.contains(e.target)
+        donorDetailModalRef.current &&
+        !donorDetailModalRef.current.contains(e.target)
       ) {
         setOpenDonorDetailModal(false);
       }
@@ -83,6 +88,30 @@ const Approval = () => {
                         <td>{item.name}</td>
                         <td>{item.owner}</td>
                         <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                        <td>
+                          <button
+                            className="bg-blue-400 px-2 py-1 text-white text-xs rounded-md mr-3 hover:bg-blue-500 transition-[background]"
+                            onClick={() => handleClickDetail(item)}
+                          >
+                            Detail
+                          </button>
+                          <button
+                            className="bg-green-400 px-2 py-1 text-white text-xs rounded-md mr-3 hover:bg-green-500 transition-[background]"
+                            onClick={() =>
+                              dispatch(verifyDonor(item._id, auth.accessToken))
+                            }
+                          >
+                            Terima
+                          </button>
+                          <button
+                            onClick={() =>
+                              dispatch(rejectDonor(item._id, auth.accessToken))
+                            }
+                            className="bg-red-400 px-2 py-1 text-white text-xs rounded-md hover:bg-red-500 transition-[background]"
+                          >
+                            Tolak
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -92,6 +121,12 @@ const Approval = () => {
           </>
         )}
       </Layout>
+      <DonorDetailModal
+        openDonorDetailModal={openDonorDetailModal}
+        setOpenDonorDetailModal={setOpenDonorDetailModal}
+        donorDetailModalRef={donorDetailModalRef}
+        selectedItem={selectedItem}
+      />
     </>
   );
 };
