@@ -1,5 +1,6 @@
 const { Event } = require('./../models/Event');
 const { Donor } = require('./../models/Donor');
+const { History } = require('./../models/History');
 
 const eventCtrl = {
   getEvent: async (req, res) => {
@@ -171,6 +172,77 @@ const eventCtrl = {
         { $sort: { createdAt: -1 } },
       ]);
 
+      return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  getEventByUser: async (req, res) => {
+    try {
+      const events = await History.find({ user: req.user._id })
+        .sort('-createdAt')
+        .populate('event');
+      return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  //  post collection --> {
+  //     "title" : "my first post",
+  //     "author" : "Jim",
+  //     "likes" : 5
+  // },
+
+  //   comment collection --> {
+  //     "postTitle" : "my first post",
+  //     "comment" : "great read",
+  //     "likes" : 3
+  //  },
+
+  //   db.posts.aggregate([
+  //     { $lookup:
+  //         {
+  //            from: "comments",
+  //            localField: "title",
+  //            foreignField: "postTitle",
+  //            as: "comments"
+  //         }
+  //     }
+  // ])
+
+  //   This query returns the following..
+  // {
+  //     "title" : "my first post",
+  //     "author" : "Jim",
+  //     "likes" : 5,
+  //     "comments" : [
+  //         {
+  //             "postTitle" : "my first post",
+  //             "comment" : "great read",
+  //             "likes" : 3
+  //         }
+  //     ]
+  // },
+  getHomeEvents: async (req, res) => {
+    try {
+      const events = await Event.aggregate([
+        { $match: { expireRegistration: { $gt: new Date() } } },
+        {
+          $lookup: {
+            from: 'donors',
+            localField: 'user',
+            foreignField: 'user',
+            as: 'donor',
+          },
+        },
+        {
+          $unwind: '$donor',
+        },
+        { $sort: { createdAt: -1 } },
+        { $limit: 4 },
+      ]);
       return res.status(200).json({ events });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

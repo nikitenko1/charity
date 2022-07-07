@@ -50,10 +50,18 @@ const User = () => {
     setSelectedItem();
   };
 
+  useEffect(() => {
+    dispatch(getUser(auth.accessToken));
+  }, [dispatch, auth.accessToken]);
+
+  if (auth.user?.role !== 'admin') {
+    return <NotFound />;
+  }
+
   return (
     <>
       <Layout>
-        <h1 className="text-xl text-orange-400 font-medium">User List</h1>
+        <h1 className="text-xl text-sky-400 font-medium">User List</h1>
         {alert.loading ? (
           <Loader size="xl" />
         ) : (
@@ -66,13 +74,30 @@ const User = () => {
               <div className="overflow-x-auto mt-6">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-sm bg-orange-400 text-white">
+                    <tr className="text-sm bg-sky-400 text-white">
                       <th className="p-3">No</th>
                       <th>Name</th>
                       <th>Username</th>
                       <th>Action</th>
                     </tr>
                   </thead>
+                  <tbody>
+                    {user.map((item, idx) => (
+                      <tr className="text-sm text-center bg-gray-100">
+                        <td className="p-3">{idx + 1}</td>
+                        <td>{item.name}</td>
+                        <td>{item.username}</td>
+                        <td>
+                          <button
+                            onClick={() => handleClickDelete(item)}
+                            className="bg-red-400 px-2 py-1 text-white text-xs rounded-md hover:bg-red-500 transition-[background]"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             )}

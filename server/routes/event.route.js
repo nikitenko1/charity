@@ -13,7 +13,17 @@ router
   .get(eventCtrl.getEvent)
   .post(isAuthenticated, authorizeRoles('donor'), eventCtrl.createEvent);
 
+router
+  .route('/ticket')
+  .get(isAuthenticated, authorizeRoles('user'), eventCtrl.getEventByUser);
+
 router.route('/search').get(eventCtrl.searchEvent);
+
+router.route('/home').get(eventCtrl.getHomeEvents);
+
+router
+  .route('/donor')
+  .get(isAuthenticated, authorizeRoles('donor'), eventCtrl.getEventByDonor);
 
 router
   .route('/:id')
@@ -22,9 +32,5 @@ router
     authorizeRoles('donor', 'admin'),
     eventCtrl.deleteEvent
   );
-
-router
-  .route('/donor')
-  .get(isAuthenticated, authorizeRoles('donor'), eventCtrl.getEventByDonor);
 
 module.exports = router;

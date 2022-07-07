@@ -34,14 +34,14 @@ const DonorProfileModal = ({
     if (
       !profileData.name ||
       !profileData.owner ||
-      !profileData.nikname ||
+      !profileData.nickname ||
       !profileData.email ||
       !profileData.address
     ) {
       return dispatch({
         type: GLOBAL_TYPES.ALERT,
         payload: {
-          errors: `Every field can't be blank.`,
+          errors: `Please provide every field.`,
         },
       });
     }

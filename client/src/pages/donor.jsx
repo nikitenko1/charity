@@ -99,19 +99,19 @@ const Donor = () => {
                   <thead>
                     <tr className="text-sm bg-sky-400 text-white">
                       <th className="p-3">No</th>
-                      <th>Nama Donatur</th>
-                      <th>Nama Pemilik</th>
-                      <th>Alamat</th>
-                      <th>Aksi</th>
+                      <th>Donor Name</th>
+                      <th>Name of the owner</th>
+                      <th>Address</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {donor.map((item, idx) => (
                       <tr className="text-sm text-center bg-gray-100">
                         <td className="p-3">{idx + 1}</td>
-                        <td>{item.nama}</td>
-                        <td>{item.pemilik}</td>
-                        <td>{item.alamat}</td>
+                        <td>{item.name}</td>
+                        <td>{item.owner}</td>
+                        <td>{item.address}</td>
                         <td>
                           <button
                             onClick={() => handleClickDetail(item)}
