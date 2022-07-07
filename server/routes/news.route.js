@@ -13,4 +13,6 @@ router
   .get(newsCtrl.getNews)
   .post(isAuthenticated, authorizeRoles('admin'), newsCtrl.createNews);
 
+router.route('/home').get(newsCtrl.getHomeNews);
+
 module.exports = router;

@@ -31,6 +31,11 @@ router
     isAuthenticated,
     authorizeRoles('donor', 'admin'),
     eventCtrl.deleteEvent
-  );
+  )
+  .patch(isAuthenticated, authorizeRoles('user'), eventCtrl.registerEvent);
 
+router
+  .route('/edit/:id')
+  .patch(isAuthenticated, authorizeRoles('donatur'), eventCtrl.updateEvent);
+  
 module.exports = router;

@@ -84,7 +84,7 @@ const Donor = () => {
   return (
     <>
       <Layout>
-        <h1 className="text-xl text-sky-400 font-medium">Donor List</h1>
+        <h1 className="text-xl text-orange-400 font-medium">Donor List</h1>
         {alert.loading ? (
           <Loader size="xl" />
         ) : (
@@ -97,7 +97,7 @@ const Donor = () => {
               <div className="overflow-x-auto mt-6">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-sm bg-sky-400 text-white">
+                    <tr className="text-sm bg-orange-400 text-white">
                       <th className="p-3">No</th>
                       <th>Donor Name</th>
                       <th>Name of the owner</th>
@@ -135,10 +135,11 @@ const Donor = () => {
           </>
         )}
       </Layout>
+
       <DonorDetailModal
-        openDonatorDetailModal={openDetailModal}
-        setOpenDonatorDetailModal={setOpenDetailModal}
-        donatorDetailModalRef={detailModalRef}
+        openDonorDetailModal={openDetailModal}
+        setOpenDonorDetailModal={setOpenDetailModal}
+        donorDetailModalRef={detailModalRef}
         selectedItem={selectedItem}
       />
 

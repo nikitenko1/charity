@@ -15,6 +15,7 @@ const EventDetailModal = ({
   setOpenEventDetailModal,
   eventDetailModalRef,
   selectedItem,
+  hideButton,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +45,75 @@ const EventDetailModal = ({
           : 'opacity-0 pointer-events-none'
       } transition-[opacity] flex items-center z-[999] justify-center p-4 bg-[rgba(0,0,0,.7)]`}
     >
-      EventDetailModal
+      <div
+        ref={eventDetailModalRef}
+        className={`bg-white w-full ${
+          openEventDetailModal ? 'translate-y-0' : '-translate-y-12'
+        } transition-[transform] max-w-[550px] rounded-md`}
+      >
+        <div className="flex items-center justify-between border-b border-gray-300 px-5 py-3">
+          <h1>Detail Event: {selectedItem?.name}</h1>
+          <AiOutlineClose
+            onClick={() => setOpenEventDetailModal(false)}
+            className="cursor-pointer text-lg"
+          />
+        </div>
+        <div className="p-5">
+          <div className="w-full h-[200px] bg-gray-300 rounded-md">
+            <img
+              src={selectedItem?.picture}
+              alt={selectedItem?.name}
+              className="rounded-md w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <p className="text-justify text-sm text-gray-800 mt-3 leading-loose">
+              {selectedItem?.description}
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
+            <p className=" flex items-center gap-3 mt-3 text-sm text-gray-700 capitalize">
+              <GoLocation />
+              {selectedItem?.location}
+            </p>
+            <div className="flex text-sm text-gray-700 font-medium gap-3">
+              <p>Registration Expire</p>
+              <p>
+                {new Date(
+                  selectedItem?.expireRegistration
+                ).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+          <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
+            <AiFillCalendar />
+            {new Date(selectedItem?.date).toLocaleDateString()}
+          </p>
+          <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
+            <AiOutlineClockCircle />
+            {selectedItem?.timeStart} - {selectedItem?.timesUp}
+          </p>
+          {!hideButton && (
+            <button
+              onClick={handleRegisterEvent}
+              disabled={loading ? true : false}
+              className={`${
+                loading
+                  ? 'bg-sky-200 hover:bg-sky-200 cursor-auto'
+                  : 'bg-sky-400 hover:bg-sky-500 cursor-pointer'
+              } text-sm text-white w-full py-3 rounded-md transition-[background] mt-4`}
+            >
+              {loading ? (
+                <Loader />
+              ) : (
+                `Register (${
+                  selectedItem?.capacity - selectedItem?.registrant?.length
+                } Slot Left)`
+              )}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

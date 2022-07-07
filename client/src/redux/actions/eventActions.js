@@ -6,9 +6,21 @@ import {
   postDataAPI,
   deleteDataAPI,
 } from './../../utils/fetchData';
+import { uploadImages } from './../../utils/imageHelper';
 
 export const registerEvent = (id, auth) => async (dispatch) => {
   try {
+    const res = await patchDataAPI(`event/${id}`, {}, auth.accessToken);
+    dispatch({
+      type: EVENT_TYPES.REGISTER_EVENT,
+      payload: { id, user: auth.user._id },
+    });
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
   } catch (err) {
     dispatch({
       type: GLOBAL_TYPES.ALERT,
@@ -97,6 +109,69 @@ export const getEventByDonor = (token) => async (dispatch) => {
     dispatch({
       type: GLOBAL_TYPES.ALERT,
       payload: {},
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        errors: err.response.data.msg,
+      },
+    });
+  }
+};
+
+export const createEvent = (eventData, picture, auth) => async (dispatch) => {
+  try {
+    const imageRes = await uploadImages([picture]);
+    let imageUrl = imageRes[0];
+    const res = await postDataAPI(
+      'event',
+      { ...eventData, picture: imageUrl },
+      auth.accessToken
+    );
+    dispatch({
+      type: EVENT_TYPES.CREATE_EVENT,
+      payload: res.data.event,
+    });
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        errors: err.response.data.msg,
+      },
+    });
+  }
+};
+
+export const updateEvent = (eventData, id, token) => async (dispatch) => {
+  try {
+    let imageResult = '';
+    if (eventData.picture && typeof eventData.picture !== 'string') {
+      imageResult = await uploadImages([eventData.picture]);
+    }
+    const res = await patchDataAPI(
+      `event/edit/${id}`,
+      {
+        ...eventData,
+        picture: imageResult ? imageResult[0] : eventData.picture,
+      },
+      token
+    );
+    dispatch({
+      type: EVENT_TYPES.UPDATE_EVENT,
+      payload: res.data.event,
+    });
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
     });
   } catch (err) {
     dispatch({
