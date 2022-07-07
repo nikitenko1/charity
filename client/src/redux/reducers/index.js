@@ -6,6 +6,7 @@ import donorEvent from './donorEventReducer';
 import donor from './donorReducer';
 import event from './eventReducer';
 import news from './newsReducer';
+import ticket from './ticketReducer';
 import user from './userReducer';
 
 export default combineReducers({
@@ -16,5 +17,6 @@ export default combineReducers({
   donor,
   event,
   news,
+  ticket,
   user,
 });

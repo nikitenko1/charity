@@ -22,7 +22,8 @@ app.use('/api/v1/auth', require('./routes/auth.route'));
 app.use('/api/v1/user', require('./routes/user.route'));
 app.use('/api/v1/event', require('./routes/event.route'));
 app.use('/api/v1/dashboard', require('./routes/dashboard.route'));
-app.use('/api/v1/donator', require('./routes/donor.route'));
+app.use('/api/v1/donor', require('./routes/donor.route'));
+app.use('/api/v1/news', require('./routes/news.route'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

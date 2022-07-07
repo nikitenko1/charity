@@ -10,7 +10,7 @@ const { isAuthenticated, authorizeRoles } = require('../middlewares/auth');
 
 router
   .route('/')
-  .post(isAuthenticated, authorizeRoles('donatur'), donorCtrl.completeProfile);
+  .post(isAuthenticated, authorizeRoles('donor'), donorCtrl.completeProfile);
 
 router
   .route('/unverified')
@@ -32,4 +32,5 @@ router
 router
   .route('/verified')
   .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getVerifiedDonor);
+
 module.exports = router;

@@ -14,11 +14,11 @@ export const getUnverifiedDonor = (token) => async (dispatch) => {
         loading: true,
       },
     });
-    const res = await getDataAPI('donor/unverified', token);
 
+    const res = await getDataAPI('donator/unverified', token);
     dispatch({
       type: DONOR_TYPES.GET_UNVERIFIED_DONOR,
-      payload: res.data.donators,
+      payload: res.data.donors,
     });
 
     dispatch({
