@@ -42,6 +42,12 @@ const Event = () => {
     setOpenDeleteModal(true);
   };
 
+  const handleDeleteEvent = async () => {
+    await dispatch(deleteEvent(selectedItem._id, auth.accessToken));
+    setOpenDeleteModal(false);
+    setSelectedItem();
+  };
+
   const handleClickDetail = (item) => {
     setSelectedItem(item);
     setOpenDetailModal(true);
@@ -218,11 +224,33 @@ const Event = () => {
           </>
         )}
       </Layout>
+      <EventRegistrationModal
+        openModal={openEventRegistrationModal}
+        setOpenModal={setOpenEventRegistrationModal}
+        modalRef={eventRegistrationModalRef}
+        registrant={selectedItem?.registrant}
+      />
+
       <CreateEventModal
         openCreateEventModal={openCreateEventModal}
         setOpenCreateEventModal={setOpenCreateEventModal}
         createEventModalRef={createEventModalRef}
         selectedItem={selectedItem}
+      />
+
+      <EventDetailModal
+        openEventDetailModal={openDetailModal}
+        setOpenEventDetailModal={setOpenDetailModal}
+        eventDetailModalRef={detailModalRef}
+        selectedItem={selectedItem}
+        hideButton={true}
+      />
+
+      <DeleteModal
+        openDeleteModal={openDeleteModal}
+        setOpenDeleteModal={setOpenDeleteModal}
+        deleteModalRef={deleteModalRef}
+        onClick={handleDeleteEvent}
       />
     </>
   );

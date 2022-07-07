@@ -101,7 +101,7 @@ const Approval = () => {
                               dispatch(verifyDonor(item._id, auth.accessToken))
                             }
                           >
-                            Terima
+                            Accept
                           </button>
                           <button
                             onClick={() =>

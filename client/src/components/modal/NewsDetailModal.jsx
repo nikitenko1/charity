@@ -12,7 +12,7 @@ const NewsDetailModal = ({
         openNewsDetailModal
           ? 'opacity-100 pointer-events-auto'
           : 'opacity-0 pointer-events-none'
-      } transition-[opacity] flex items-center justify-center p-4 bg-[rgba(0,0,0,.7)]`}
+      } transition-[opacity] flex items-center justify-center p-4 bg-[rgba(0,0,0,.7)] z-[999]`}
     >
       <div
         ref={newsDetailModalRef}

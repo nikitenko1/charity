@@ -3,46 +3,6 @@ const { Donor } = require('./../models/Donor');
 const { History } = require('./../models/History');
 
 const eventCtrl = {
-  getEvent: async (req, res) => {
-    try {
-      const events = await Event.aggregate([
-        {
-          $lookup: {
-            from: 'donors',
-            localField: 'user',
-            foreignField: 'user',
-            as: 'donor',
-          },
-        },
-        {
-          $lookup: {
-            from: 'histories',
-            let: { history_id: '$registrant' },
-            pipeline: [
-              { $match: { $expr: { $in: ['$_id', '$$history_id'] } } },
-              {
-                $lookup: {
-                  from: 'users',
-                  localField: 'user',
-                  foreignField: '_id',
-                  as: 'user',
-                },
-              },
-              { $unwind: '$user' },
-            ],
-            as: 'registrant',
-          },
-        },
-        {
-          $unwind: '$donor',
-        },
-        { $sort: { createdAt: -1 } },
-      ]);
-      return res.status(200).json({ events });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
   createEvent: async (req, res) => {
     try {
       const {
@@ -189,6 +149,47 @@ const eventCtrl = {
     }
   },
 
+  getEvent: async (req, res) => {
+    try {
+      const events = await Event.aggregate([
+        {
+          $lookup: {
+            from: 'donors',
+            localField: 'user',
+            foreignField: 'user',
+            as: 'donor',
+          },
+        },
+        {
+          $lookup: {
+            from: 'histories',
+            let: { history_id: '$registrant' },
+            pipeline: [
+              { $match: { $expr: { $in: ['$_id', '$$history_id'] } } },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'user',
+                  foreignField: '_id',
+                  as: 'user',
+                },
+              },
+              { $unwind: '$user' },
+            ],
+            as: 'registrant',
+          },
+        },
+        {
+          $unwind: '$donor',
+        },
+        { $sort: { createdAt: -1 } },
+      ]);
+      return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
   //  post collection --> {
   //     "title" : "my first post",
   //     "author" : "Jim",
@@ -244,6 +245,111 @@ const eventCtrl = {
         { $limit: 4 },
       ]);
       return res.status(200).json({ events });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  registerEvent: async (req, res) => {
+    try {
+      const checkRegisterEligibility = await History.findOne({
+        user: req.user._id,
+        event: req.params.id,
+      });
+      if (checkRegisterEligibility)
+        return res
+          .status(400)
+          .json({ msg: 'You have already registered for this event.' });
+      const nowDate = new Date();
+
+      const checkMaxRegisterDate = await Event.findOne({ _id: req.params.id });
+      if (nowDate > checkMaxRegisterDate.expireRegistration)
+        return res
+          .status(400)
+          .json({ msg: 'Registration for this event is closed.' });
+
+      const newHistory = new History({
+        user: req.user._id,
+        event: req.params.id,
+      });
+
+      const event = await Event.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          $push: { registrant: newHistory._id },
+        },
+        { new: true }
+      );
+      await newHistory.save();
+
+      if (!event) return res.status(404).json({ msg: 'Event not found.' });
+
+      return res.status(200).json({ msg: 'Event registration is successful.' });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  updateEvent: async (req, res) => {
+    try {
+      const {
+        name,
+        location,
+        date,
+        expireRegistration,
+        category,
+        timeStart,
+        timesUp,
+        capacity,
+        description,
+        picture,
+      } = req.body;
+      if (
+        !name ||
+        !location ||
+        !date ||
+        !expireRegistration ||
+        !category ||
+        !timeStart ||
+        !timesUp ||
+        !description ||
+        !capacity ||
+        !picture
+      )
+        return res.status(400).json({
+          msg: 'The data to change the event is not filled in completely.',
+        });
+
+      const findDonor = await Donor.findOne({
+        user: req.user._id,
+        status: 'verified',
+      });
+      if (!findDonor)
+        return res
+          .status(400)
+          .json({ msg: 'Donor profile has not been verified.' });
+
+      const event = await Event.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          name,
+          location,
+          date,
+          expireRegistration,
+          category,
+          timeStart,
+          timesUp,
+          capacity,
+          description,
+          picture,
+        },
+        { new: true }
+      );
+      if (!event) return res.status(404).json({ msg: 'Event not found.' });
+
+      return res.status(200).json({
+        msg: 'The event data has been changed successfully.',
+        event,
+      });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

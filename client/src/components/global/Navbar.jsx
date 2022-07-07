@@ -202,7 +202,7 @@ const Navbar = () => {
                       >
                         <div className="w-24 h-24 bg-gray-300 rounded-md">
                           <img
-                            src={item.avatar}
+                            src={item.picture}
                             alt={item.name}
                             className="w-full h-full rounded-md"
                           />
