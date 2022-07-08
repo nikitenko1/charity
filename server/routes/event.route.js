@@ -37,5 +37,7 @@ router
 router
   .route('/edit/:id')
   .patch(isAuthenticated, authorizeRoles('donatur'), eventCtrl.updateEvent);
-  
+
+router.route('/filter').get(eventCtrl.getFilteredEvents);
+
 module.exports = router;

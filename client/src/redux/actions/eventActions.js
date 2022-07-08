@@ -182,3 +182,61 @@ export const updateEvent = (eventData, id, token) => async (dispatch) => {
     });
   }
 };
+
+export const getFilteredEvent =
+  (page = 1, category = [], location = [], sort = '') =>
+  async (dispatch) => {
+    let categoryQueryStr = '';
+    let locationQueryStr = '';
+
+    if (category.length > 0) {
+      for (let i = 0; i < category.length; i++) {
+        if (i !== category.length - 1) {
+          categoryQueryStr += `kategori=${category[i]}&`;
+        } else {
+          categoryQueryStr += `kategori=${category[i]}`;
+        }
+      }
+    }
+
+    if (location.length > 0) {
+      for (let i = 0; i < location.length; i++) {
+        if (i !== location.length - 1) {
+          locationQueryStr += `lokasi=${location[i]}&`;
+        } else {
+          locationQueryStr += `lokasi=${location[i]}`;
+        }
+      }
+    }
+    try {
+      dispatch({
+        type: GLOBAL_TYPES.ALERT,
+        payload: {
+          loading: true,
+        },
+      });
+
+      const res = await getDataAPI(
+        `event/filter?${categoryQueryStr}&${locationQueryStr}&sort=${sort}&page=${page}`
+      );
+      dispatch({
+        type: EVENT_TYPES.GET_HOME_EVENT,
+        payload: {
+          data: res.data.events,
+          totalPage: res.data.totalPage,
+        },
+      });
+
+      dispatch({
+        type: GLOBAL_TYPES.ALERT,
+        payload: {},
+      });
+    } catch (err) {
+      dispatch({
+        type: GLOBAL_TYPES.ALERT,
+        payload: {
+          errors: err.response.data.msg,
+        },
+      });
+    }
+  };
