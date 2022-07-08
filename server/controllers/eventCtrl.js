@@ -2,7 +2,149 @@ const { Event } = require('./../models/Event');
 const { Donor } = require('./../models/Donor');
 const { History } = require('./../models/History');
 
+const Pagination = (req) => {
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 3;
+  const skip = (page - 1) * limit;
+  return { page, limit, skip };
+};
+
 const eventCtrl = {
+  getFilteredEvents: async (req, res) => {
+    const { skip, limit } = Pagination(req);
+
+    const categoryQuery = [];
+    if (req.query.category) {
+      if (typeof req.query.category === 'string') {
+        categoryQuery.push(req.query.category);
+      } else {
+        for (let i = 0; i < req.query.category.length; i++) {
+          categoryQuery.push(req.query.category[i]);
+        }
+      }
+    }
+
+    const locationQuery = [];
+    if (req.query.location) {
+      if (typeof req.query.location === 'string') {
+        locationQuery.push(req.query.location);
+      } else {
+        for (let i = 0; i < req.query.location.length; i++) {
+          locationQuery.push(req.query.location[i]);
+        }
+      }
+    }
+
+    const dataAggregation = [
+      {
+        $lookup: {
+          from: 'donors',
+          localField: 'user',
+          foreignField: 'user',
+          as: 'donor',
+        },
+      },
+      { $unwind: '$donor' },
+      { $skip: skip },
+      { $limit: limit },
+    ];
+    // { $count: <string> } <string> is the name of the output field which has the count as its value.
+    const countAggregation = [{ $count: 'count' }];
+
+    if (categoryQuery.length !== 0) {
+      dataAggregation.unshift({
+        // The $in operator selects the documents where the value of a field
+        // equals any value in the specified arrays
+        $match: {
+          category: { $in: categoryQuery },
+        },
+      });
+      countAggregation.unshift({
+        $match: {
+          category: { $in: categoryQuery },
+        },
+      });
+    }
+
+    if (locationQuery.length !== 0) {
+      dataAggregation.unshift({
+        // The $in operator selects the documents where the value of a field
+        // equals any value in the specified arrays
+        $match: {
+          location: { $in: locationQuery },
+        },
+      });
+
+      countAggregation.unshift({
+        $match: {
+          location: { $in: locationQuery },
+        },
+      });
+    }
+
+    if (req.query.sort) {
+      if (req.query.urutkan === 'latest') {
+        dataAggregation.push({ $sort: { createdAt: -1 } });
+        countAggregation.push({ $sort: { createdAt: -1 } });
+      } else {
+        const year = new Date().getFullYear();
+        let month = new Date().getMonth() + 1;
+        let date = new Date().getDate();
+
+        if (month.toString().length === 1) {
+          month = `0${month}`;
+        }
+        if (date.toString().length === 1) {
+          date = `0${date}`;
+        }
+
+        dataAggregation.push({
+          $match: {
+            date: new Date(`${year}-${month}-${date}T00:00:00.000+00:00`),
+          },
+        });
+
+        countAggregation.push({
+          $match: {
+            date: new Date(`${year}-${month}-${date}T00:00:00.000+00:00`),
+          },
+        });
+      }
+    }
+    try {
+      const data = await Event.aggregate([
+        {
+          $facet: {
+            totalData: dataAggregation,
+            totalCount: countAggregation,
+          },
+        },
+        // Example                               Results
+        // { $arrayElemAt: [ [ 1, 2, 3 ], 0 ] }     1
+        {
+          $project: {
+            count: { $arrayElemAt: ['$totalCount.count', 0] },
+            totalData: 1,
+          },
+        },
+      ]);
+      const events = data[0].totalData;
+      const eventsCount = data[0].count;
+
+      let totalPage = 0;
+
+      if (eventsCount % limit === 0) {
+        totalPage = eventsCount / limit;
+      } else {
+        totalPage = Math.floor(eventsCount / limit) + 1;
+      }
+
+      return res.status(200).json({ events, totalPage });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
   createEvent: async (req, res) => {
     try {
       const {

@@ -5,6 +5,7 @@ import approval from './approvalReducer';
 import donorEvent from './donorEventReducer';
 import donor from './donorReducer';
 import event from './eventReducer';
+import homeEvent from './homeEventReducer';
 import news from './newsReducer';
 import ticket from './ticketReducer';
 import user from './userReducer';
@@ -16,6 +17,7 @@ export default combineReducers({
   donorEvent,
   donor,
   event,
+  homeEvent,
   news,
   ticket,
   user,

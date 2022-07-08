@@ -54,7 +54,7 @@ const History = () => {
       <HeadInfo title="History" />
       <div>
         <Navbar />
-        <h1 className="px-10 py-8 font-medium text-2xl text-sky-400">
+        <h1 className="px-10 py-8 font-medium text-2xl text-orange-400">
           Event Tickets
         </h1>
         {alert.loading ? (
@@ -71,7 +71,7 @@ const History = () => {
                   <thead>
                     <tr className="text-sm bg-sky-400 text-white">
                       <th className="p-3">No</th>
-                      <th>Name Event</th>
+                      <th>Event Name</th>
                       <th>Location</th>
                       <th>Date</th>
                       <th>Time</th>

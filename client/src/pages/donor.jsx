@@ -112,6 +112,7 @@ const Donor = () => {
                         <td>{item.name}</td>
                         <td>{item.owner}</td>
                         <td>{item.address}</td>
+                        
                         <td>
                           <button
                             onClick={() => handleClickDetail(item)}
