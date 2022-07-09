@@ -15,7 +15,7 @@ export const getUnverifiedDonor = (token) => async (dispatch) => {
       },
     });
 
-    const res = await getDataAPI('donator/unverified', token);
+    const res = await getDataAPI('donor/unverified', token);
     dispatch({
       type: DONOR_TYPES.GET_UNVERIFIED_DONOR,
       payload: res.data.donors,
@@ -66,4 +66,26 @@ export const verifyDonor = (id, token) => async (dispatch) => {
   }
 };
 
-export const rejectDonor = (id, token) => async (dispatch) => {};
+export const rejectDonor = (id, token) => async (dispatch) => {
+  try {
+    const res = await deleteDataAPI(`donor/reject/${id}`, token);
+    dispatch({
+      type: DONOR_TYPES.CHANGE_STATUS,
+      payload: id,
+    });
+
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
+  } catch (err) {
+    dispatch({
+      type: GLOBAL_TYPES.ALERT,
+      payload: {
+        errors: err.response.data.msg,
+      },
+    });
+  }
+};

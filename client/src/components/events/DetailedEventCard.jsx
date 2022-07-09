@@ -42,7 +42,7 @@ const DetailedEventCard = ({ item }) => {
     <>
       <div
         onClick={handleClickDetail}
-        className="cursor-pointer mb-10 bg-orange-400 rounded-md flex md:flex-row flex-col items-center gap-7 md:p-8 p-0"
+        className="cursor-pointer mb-10 bg-cyan-400 rounded-md flex md:flex-row flex-col items-center gap-7 md:p-8 p-0"
       >
         <div className="md:h-[160px] h-[200px] bg-gray-300 md:rounded-md rounded-t-md md:w-[200px] w-full">
           <img

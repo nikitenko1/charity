@@ -11,17 +11,13 @@ const { isAuthenticated, authorizeRoles } = require('../middlewares/auth');
 router
   .route('/')
   .post(isAuthenticated, authorizeRoles('donor'), donorCtrl.completeProfile);
-
 router
   .route('/unverified')
   .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getUnverifiedDonor);
 router
   .route('/verified')
   .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getVerifiedDonor);
-
-router
-  .route('/:id')
-  .delete(isAuthenticated, authorizeRoles('admin'), donorCtrl.deleteDonor);
+router.route('/user').get(isAuthenticated, donorCtrl.getDonorByUser);
 
 router
   .route('/accept/:id')
@@ -29,8 +25,9 @@ router
 router
   .route('/reject/:id')
   .delete(isAuthenticated, authorizeRoles('admin'), donorCtrl.rejectDonor);
+
 router
-  .route('/verified')
-  .get(isAuthenticated, authorizeRoles('admin'), donorCtrl.getVerifiedDonor);
+  .route('/:id')
+  .delete(isAuthenticated, authorizeRoles('admin'), donorCtrl.deleteDonor);
 
 module.exports = router;

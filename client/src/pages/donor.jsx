@@ -6,6 +6,7 @@ import DonorDetailModal from './../components/modal/DonorDetailModal';
 import NotFound from './../components/global/NotFound';
 import Loader from './../components/global/Loader';
 import { deleteDonor, getDonor } from './../redux/actions/donorActions';
+import HeadInfo from '../utils/HeadInfo';
 
 const Donor = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -83,8 +84,9 @@ const Donor = () => {
 
   return (
     <>
+      <HeadInfo title="Event List" />
       <Layout>
-        <h1 className="text-xl text-orange-400 font-medium">Donor List</h1>
+        <h1 className="text-xl text-cyan-400 font-medium">Donor List</h1>
         {alert.loading ? (
           <Loader size="xl" />
         ) : (
@@ -97,7 +99,7 @@ const Donor = () => {
               <div className="overflow-x-auto mt-6">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-sm bg-orange-400 text-white">
+                    <tr className="text-sm bg-cyan-400 text-white">
                       <th className="p-3">No</th>
                       <th>Donor Name</th>
                       <th>Name of the owner</th>
@@ -107,12 +109,12 @@ const Donor = () => {
                   </thead>
                   <tbody>
                     {donor.map((item, idx) => (
-                      <tr className="text-sm text-center bg-gray-100">
+                      <tr className="text-sm text-center bg-gray-100" key={idx}>
                         <td className="p-3">{idx + 1}</td>
                         <td>{item.name}</td>
                         <td>{item.owner}</td>
                         <td>{item.address}</td>
-                        
+
                         <td>
                           <button
                             onClick={() => handleClickDetail(item)}
@@ -136,14 +138,12 @@ const Donor = () => {
           </>
         )}
       </Layout>
-
       <DonorDetailModal
         openDonorDetailModal={openDetailModal}
         setOpenDonorDetailModal={setOpenDetailModal}
         donorDetailModalRef={detailModalRef}
         selectedItem={selectedItem}
       />
-
       <DeleteModal
         openDeleteModal={openDeleteModal}
         setOpenDeleteModal={setOpenDeleteModal}

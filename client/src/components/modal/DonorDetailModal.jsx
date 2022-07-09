@@ -41,9 +41,9 @@ const DonorDetailModal = ({
             </p>
           </div>
           <div className="mt-5">
-            <h1 className="text-sm">Nickname</h1>
+            <h1 className="text-sm">Slogan</h1>
             <p className="border border-gray-300 bg-gray-100 mt-3 text-sm rounded-md px-3 h-10 flex items-center">
-              {selectedItem?.nickname}
+              {selectedItem?.slogan}
             </p>
           </div>
           <div className="mt-5">

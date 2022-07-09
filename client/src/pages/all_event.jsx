@@ -148,7 +148,7 @@ const Events = () => {
                       >
                         <td className="p-3">{idx + 1}</td>
                         <td>{item.name}</td>
-                        <td>{item.donor?.nama}</td>
+                        <td>{item.donor?.name}</td>
                         <td>{new Date(item.date).toLocaleDateString()}</td>
                         <td>
                           {item.timeStart} - {item.timesUp}
@@ -173,7 +173,7 @@ const Events = () => {
                             onClick={() => handleClickDelete(item)}
                             className="bg-red-400 px-2 py-1 text-white text-xs rounded-md hover:bg-red-500 transition-[background]"
                           >
-                            Hapus
+                            Wipe out
                           </button>
                         </td>
                       </tr>
@@ -202,7 +202,7 @@ const Events = () => {
         openModal={openEventRegistrationModal}
         setOpenModal={setOpenEventRegistrationModal}
         modalRef={eventRegistrationModalRef}
-        pendaftar={selectedItem?.pendaftar}
+        registrant={selectedItem?.registrant}
       />
     </>
   );

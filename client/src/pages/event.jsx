@@ -182,7 +182,7 @@ const Event = () => {
                       >
                         <td className="p-3">{idx + 1}</td>
                         <td>{item.name}</td>
-                        <td>{new Date(item.tanggal).toLocaleDateString()}</td>
+                        <td>{new Date(item.date).toLocaleDateString()}</td>
                         <td>
                           {item.timeStart} - {item.timesUp}
                         </td>
