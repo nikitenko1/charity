@@ -16,7 +16,7 @@ const LatestEvents = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-medium text-2xl text-sky-500">Latest Events</h1>
       </div>
-      <div className="grid">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-8 mt-7">
         {events.map((item) => (
           <EventCard key={item._id} item={item} />
         ))}

@@ -5,12 +5,16 @@ const { Event } = require('./../models/Event');
 const donorCtrl = {
   completeProfile: async (req, res) => {
     try {
-      const { name, owner, nickname, email, address } = req.body;
-
-      if (!name || !owner || !nickname || !email || !address)
+      const { name, owner, slogan, email, address } = req.body;
+      if (!name || !owner || !slogan || !email || !address)
         return res.status(400).json({
-          msg: 'Fill out all fields in this form.',
+          msg: 'The name, owner, slogan, and address fields must be filled in.',
         });
+
+      const findUser = await User.findOne({ email });
+      if (findUser)
+        return res.status(400).json({ msg: 'Pre-registered email address.' });
+
       await User.findOneAndUpdate(
         { _id: req.user._id },
         { email },
@@ -20,8 +24,7 @@ const donorCtrl = {
       const newDonor = new Donor({
         name,
         owner,
-        nickname,
-        email,
+        slogan,
         address,
         user: req.user._id,
       });
@@ -32,7 +35,6 @@ const donorCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
-
   getUnverifiedDonor: async (req, res) => {
     try {
       const donors = await Donor.find({ status: 'not verified' })
@@ -86,6 +88,17 @@ const donorCtrl = {
     try {
       const donors = await Donor.find({ status: 'verified' });
       return res.status(200).json({ donors });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  getDonorByUser: async (req, res) => {
+    try {
+      const donor = await Donor.findOne({ user: req.user._id });
+      if (!donor) return res.status(404).json({ msg: 'Donor not found.' });
+
+      return res.status(200).json({ donor });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

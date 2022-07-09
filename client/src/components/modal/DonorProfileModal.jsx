@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AiOutlineClose } from 'react-icons/ai';
 import { getDataAPI, postDataAPI } from './../../utils/fetchData';
@@ -13,11 +13,10 @@ const DonorProfileModal = ({
   const [profileData, setProfileData] = useState({
     name: '',
     owner: '',
-    nickname: '',
+    slogan: '',
     email: '',
     address: '',
   });
-
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
 
@@ -34,17 +33,18 @@ const DonorProfileModal = ({
     if (
       !profileData.name ||
       !profileData.owner ||
-      !profileData.nickname ||
+      !profileData.slogan ||
       !profileData.email ||
       !profileData.address
     ) {
       return dispatch({
         type: GLOBAL_TYPES.ALERT,
         payload: {
-          errors: `Please provide every field.`,
+          errors: `The fields for the organization name, owner's name, slogan, email, and also address are mandatory.`,
         },
       });
     }
+
     setLoading(true);
     await postDataAPI('donor', profileData, auth.accessToken)
       .then((res) => {
@@ -67,6 +67,31 @@ const DonorProfileModal = ({
     setLoading(false);
   };
 
+  useEffect(() => {
+    getDataAPI('donor/user', auth.accessToken)
+      .then((res) => {
+        setProfileData({
+          name: res.data.donor.name,
+          email: auth.user?.email,
+          owner: res.data.donor.owner,
+          slogan: res.data.donor.slogan,
+          address: res.data.donor.address,
+        });
+        if (res.data.donor.status !== 'verified') {
+          setStatus('Waiting for verification');
+        } else {
+          setStatus('Verified');
+        }
+      })
+      .catch(() => {
+        if (auth.user?.email) {
+          setStatus('Verification failed');
+        } else {
+          setStatus('Not verified');
+        }
+      });
+  }, [auth]);
+
   return (
     <div
       className={`fixed top-0 left-0 right-0 bottom-0 ${
@@ -77,13 +102,13 @@ const DonorProfileModal = ({
     >
       <div
         ref={donorProfileModalRef}
-        className={`bg-white w-full max-w-[500px] rounded-md ${
+        className={`bg-white w-full ${
           openDonorProfileModal ? 'translate-y-0' : '-translate-y-12'
-        } transition-[transform]`}
+        } transition-[transform] max-w-[500px] rounded-md`}
       >
         <div className="border-b border-gray-300 px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1>Donor Account Form</h1>
+            <h1>Fill Out Donor Profile</h1>
             <p
               className={`text-xs rounded-md p-1 text-white ${
                 status === 'Verification failed'
@@ -102,7 +127,7 @@ const DonorProfileModal = ({
             className="cursor-pointer"
           />
         </div>
-        <div className="p-5 h-[500px] overflow-auto">
+        <div className="p-5 h-[500px] overflow-auto hide-scrollbar">
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="name" className="text-sm">
@@ -124,7 +149,7 @@ const DonorProfileModal = ({
             </div>
             <div className="mt-5">
               <label htmlFor="owner" className="text-sm">
-                Owner Name
+                Name of the owner
               </label>
               <input
                 disabled={
@@ -141,8 +166,8 @@ const DonorProfileModal = ({
               />
             </div>
             <div className="mt-5">
-              <label htmlFor="nickname" className="text-sm">
-                Nickname
+              <label htmlFor="slogan" className="text-sm">
+                slogan
               </label>
               <input
                 disabled={
@@ -151,9 +176,9 @@ const DonorProfileModal = ({
                     : true
                 }
                 type="text"
-                name="nickname"
-                id="nickname"
-                value={profileData.nickname}
+                name="slogan"
+                id="slogan"
+                value={profileData.slogan}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md px-3 h-10 outline-0 mt-3 text-sm"
               />
@@ -177,7 +202,7 @@ const DonorProfileModal = ({
               />
             </div>
             <div className="mt-5">
-              <label htmlFor="alamat" className="text-sm">
+              <label htmlFor="address" className="text-sm">
                 Address
               </label>
               <textarea
@@ -198,11 +223,11 @@ const DonorProfileModal = ({
                 disabled={loading ? true : false}
                 className={`${
                   loading
-                    ? 'bg-sky-200 hover:bg-sky-200 cursor-auto'
-                    : 'bg-sky-400 hover:bg-sky-500 cursor-pointer'
+                    ? 'bg-orange-200 hover:bg-orange-200 cursor-auto'
+                    : 'bg-orange-400 hover:bg-orange-500 cursor-pointer'
                 } px-4 py-2 rounded-md text-white text-sm mt-3 transition-[background]`}
               >
-                {loading ? <Loader /> : 'Save'}
+                {loading ? <Loader /> : 'Sent'}
               </button>
             )}
           </form>

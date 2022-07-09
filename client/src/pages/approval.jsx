@@ -82,8 +82,8 @@ const Approval = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {approval.map((item) => (
-                      <tr className="text-sm text-center bg-gray-100">
+                    {approval.map((item, idx) => (
+                      <tr className="text-sm text-center bg-gray-100" key={idx}>
                         <td className="p-3">1</td>
                         <td>{item.name}</td>
                         <td>{item.owner}</td>
@@ -109,7 +109,7 @@ const Approval = () => {
                             }
                             className="bg-red-400 px-2 py-1 text-white text-xs rounded-md hover:bg-red-500 transition-[background]"
                           >
-                            Tolak
+                            Reject
                           </button>
                         </td>
                       </tr>

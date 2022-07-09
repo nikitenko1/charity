@@ -42,6 +42,7 @@ export const getDonor = (token) => async (dispatch) => {
     });
 
     const res = await getDataAPI('donor/verified', token);
+    console.log(res.data.donors);
     dispatch({
       type: DONOR_TYPES.GET_VERIFIED_DONOR,
       payload: res.data.donors,

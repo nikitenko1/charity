@@ -27,7 +27,7 @@ const EventDetailModal = ({
       return dispatch({
         type: GLOBAL_TYPES.ALERT,
         payload: {
-          errors: 'Invalid authentication to register event.',
+          errors: 'Please login to register for the event.',
         },
       });
     }
@@ -52,7 +52,12 @@ const EventDetailModal = ({
         } transition-[transform] max-w-[550px] rounded-md`}
       >
         <div className="flex items-center justify-between border-b border-gray-300 px-5 py-3">
-          <h1>Detail Event: {selectedItem?.name}</h1>
+          <h1>
+            Detail Event:{' '}
+            <span className="font-medium text-sky-600">
+              {selectedItem?.name}
+            </span>
+          </h1>
           <AiOutlineClose
             onClick={() => setOpenEventDetailModal(false)}
             className="cursor-pointer text-lg"
@@ -70,13 +75,13 @@ const EventDetailModal = ({
             <p className="text-justify text-sm text-gray-800 mt-3 leading-loose">
               {selectedItem?.description}
             </p>
-          </div>
-          <div className="flex items-center justify-between">
-            <p className=" flex items-center gap-3 mt-3 text-sm text-gray-700 capitalize">
-              <GoLocation />
-              {selectedItem?.location}
-            </p>
-            <div className="flex text-sm text-gray-700 font-medium gap-3">
+            <div className="flex items-center justify-between">
+              <p className=" flex items-center gap-3 mt-3 text-sm text-gray-700 capitalize">
+                <GoLocation />
+                {selectedItem?.location}
+              </p>
+            </div>
+            <div className="flex text-sm text-gray-700 mt-3 font-medium gap-3">
               <p>Registration Expire</p>
               <p>
                 {new Date(
@@ -84,34 +89,34 @@ const EventDetailModal = ({
                 ).toLocaleDateString()}
               </p>
             </div>
+            <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
+              <AiFillCalendar />
+              {new Date(selectedItem?.date).toLocaleDateString()}
+            </p>
+            <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
+              <AiOutlineClockCircle />
+              {selectedItem?.timeStart} - {selectedItem?.timesUp}
+            </p>
+            {!hideButton && (
+              <button
+                onClick={handleRegisterEvent}
+                disabled={loading ? true : false}
+                className={`${
+                  loading
+                    ? 'bg-orange-200 hover:bg-orange-200 cursor-auto'
+                    : 'bg-orange-400 hover:bg-orange-500 cursor-pointer'
+                } text-sm text-white w-full py-3 rounded-md transition-[background] mt-4`}
+              >
+                {loading ? (
+                  <Loader />
+                ) : (
+                  `Register (${
+                    selectedItem?.capacity - selectedItem?.registrant?.length
+                  } Slot Left)`
+                )}
+              </button>
+            )}
           </div>
-          <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
-            <AiFillCalendar />
-            {new Date(selectedItem?.date).toLocaleDateString()}
-          </p>
-          <p className="flex items-center gap-3 mt-3 text-sm text-gray-700">
-            <AiOutlineClockCircle />
-            {selectedItem?.timeStart} - {selectedItem?.timesUp}
-          </p>
-          {!hideButton && (
-            <button
-              onClick={handleRegisterEvent}
-              disabled={loading ? true : false}
-              className={`${
-                loading
-                  ? 'bg-sky-200 hover:bg-sky-200 cursor-auto'
-                  : 'bg-sky-400 hover:bg-sky-500 cursor-pointer'
-              } text-sm text-white w-full py-3 rounded-md transition-[background] mt-4`}
-            >
-              {loading ? (
-                <Loader />
-              ) : (
-                `Register (${
-                  selectedItem?.capacity - selectedItem?.registrant?.length
-                } Slot Left)`
-              )}
-            </button>
-          )}
         </div>
       </div>
     </div>

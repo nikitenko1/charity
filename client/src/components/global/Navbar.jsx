@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { GiHamburgerMenu } from 'react-icons/gi';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   AiOutlineSearch,
   AiOutlineClose,
@@ -10,8 +9,9 @@ import {
 } from 'react-icons/ai';
 import { FaTachometerAlt } from 'react-icons/fa';
 import { MdLogout } from 'react-icons/md';
-import { logout } from './../../redux/actions/authActions';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import { getDataAPI } from './../../utils/fetchData';
+import { logout } from './../../redux/actions/authActions';
 import DonorProfileModal from './../modal/DonorProfileModal';
 import EditProfileModal from './../modal/EditProfileModal';
 import EventDetailModal from './../modal/EventDetailModal';
@@ -36,14 +36,14 @@ const Navbar = () => {
   const editProfileModalRef = useRef();
   const eventDetailModalRef = useRef();
 
-  const handleLogout = async () => {
-    dispatch(logout());
-    navigate('/login');
-  };
-
   const handleClickDetail = (item) => {
     setSelectedItem(item);
     setOpenEventDetailModal(true);
+  };
+
+  const handleLogout = async () => {
+    dispatch(logout());
+    navigate('/login');
   };
 
   useEffect(() => {
@@ -60,17 +60,10 @@ const Navbar = () => {
     return () => clearTimeout(delayDebounce);
   }, [search]);
 
-  /**
-   * Hook that alerts clicks outside of the passed ref
-   */
-  // Hook get from https://stackoverflow.com/a/42234988/8583669
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
         isOpenSidebar &&
-        /**
-         * Alert if clicked on outside of element
-         */
         sidebarRef.current &&
         !sidebarRef.current.contains(e.target)
       ) {
@@ -105,10 +98,10 @@ const Navbar = () => {
     const handleClickOutside = (e) => {
       if (
         openDonorProfileModal &&
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target)
+        donorProfileModalRef.current &&
+        !donorProfileModalRef.current.contains(e.target)
       ) {
-        setIsOpenDropdown(false);
+        setOpenDonorProfileModal(false);
       }
     };
     // Bind the event listener
@@ -119,7 +112,7 @@ const Navbar = () => {
   }, [openDonorProfileModal]);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const checkIfClickedOutside = (e) => {
       if (
         openEventDetailModal &&
         eventDetailModalRef.current &&
@@ -129,10 +122,10 @@ const Navbar = () => {
       }
     };
     // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', checkIfClickedOutside);
     return () =>
       // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', checkIfClickedOutside);
   }, [openEventDetailModal]);
 
   useEffect(() => {
@@ -155,12 +148,12 @@ const Navbar = () => {
     <>
       <div className="sticky top-0 z-[99] shadow-lg flex items-center justify-between px-8 py-6 bg-white gap-8">
         <Link to="/">
-          <h1 className="text-sky-500 text-2xl font-medium">
+          <h1 className="text-cyan-500 text-2xl font-medium underline">
             Let&apos;s build | Kyiv
           </h1>
         </Link>
         <div className="flex-1 md:block flex justify-end">
-          <div className="rounded-full bg-sky-500 p-2 cursor-pointer block md:hidden w-fit">
+          <div className="rounded-full bg-orange-500 p-2 cursor-pointer block md:hidden w-fit">
             <GiHamburgerMenu
               className="block md:hidden text-white text-xl"
               onClick={() => setIsOpenSidebar(true)}
@@ -181,13 +174,14 @@ const Navbar = () => {
               <div className="relative flex-1 md:mt-0 mt-4">
                 <div className="relative">
                   <input
+                    placeholder="case-sensitive --> keep that in mind"
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="text-gray-700 border border-gray-300 rounded-md w-full h-10 outline-0 px-3 text-sm"
                   />
                   {!search && (
-                    <div className="flex items-center gap-2 absolute top-[50%] left-[5%] -translate-x-[5%] -translate-y-[50%] text-gray-400 text-sm pointer-events-none">
+                    <div className="flex items-center gap-2 absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] text-gray-400 text-sm pointer-events-none">
                       <AiOutlineSearch />
                       <p>Find Donations</p>
                     </div>
@@ -195,8 +189,9 @@ const Navbar = () => {
                 </div>
                 {searchResult.length > 0 && (
                   <div className="absolute top-[100%] w-full shadow-xl border border-gray-200 bg-white mt-3 rounded-md">
-                    {searchResult.map((item) => (
+                    {searchResult.map((item, idx) => (
                       <div
+                        key={idx}
                         onClick={() => handleClickDetail(item)}
                         className="p-7 flex items-center gap-7 w-full cursor-pointer hover:bg-gray-100"
                       >
@@ -220,7 +215,7 @@ const Navbar = () => {
 
                 {search.length > 2 && searchResult.length === 0 && (
                   <div className="absolute top-[100%] w-full shadow-xl border border-gray-200 bg-white mt-3 rounded-md p-5">
-                    <p className="bg-red-700 p-3 text-white text-sm rounded-md text-center">
+                    <p className="bg-red-500 p-3 text-white text-sm rounded-md text-center">
                       No data found
                     </p>
                   </div>
@@ -237,17 +232,18 @@ const Navbar = () => {
                         src={auth.user?.avatar}
                         alt={auth.user?.name}
                         className="w-full h-full rounded-full object-cover"
-                      />
+                      />{' '}
                     </div>
+
                     <div
                       ref={dropdownRef}
-                      className={`border border-gray-200 flex flex-col ${
+                      className={`${
                         isOpenDropdown ? 'scale-y-1' : 'scale-y-0'
-                      } origin-top transition-[transform] absolute top-[100%] right-0 w-[260px] bg-white rounded-t-md shadow-xl mt-3`}
+                      } origin-top transition-[transform] absolute top-[100%] right-0 w-[260px] bg-white rounded-t-md flex flex-col shadow-xl border border-gray-200 mt-3`}
                     >
                       <p
                         onClick={() => setOpenEditProfileModal(true)}
-                        className="border-b border-gray-300 hover:bg-gray-100 cursor-pointer flex items-center gap-3 p-3 transition-[background] rounded-t-md"
+                        className="cursor-pointer flex items-center gap-3 border-b border-gray-300 p-3 hover:bg-gray-100 transition-[background] rounded-t-md"
                       >
                         <AiOutlineUser />
                         Edit Profile
@@ -255,7 +251,7 @@ const Navbar = () => {
                       {auth.user.role === 'user' ? (
                         <Link
                           to="/history"
-                          className="border-b border-gray-300 hover:bg-gray-100 flex items-center gap-3 p-3 transition-[background] rounded-tl-md rounded-tr-md"
+                          className="flex items-center gap-3 border-b border-gray-300 p-3 hover:bg-gray-100 transition-[background] rounded-tl-md rounded-tr-md"
                         >
                           <AiOutlineHistory />
                           History
@@ -268,7 +264,7 @@ const Navbar = () => {
                                 ? '/approval'
                                 : '/overview'
                             }`}
-                            className="border-b border-gray-300 p-3 hover:bg-gray-100 flex items-center gap-3 transition-[background]"
+                            className="flex items-center gap-3 border-b border-gray-300 p-3 hover:bg-gray-100 transition-[background]"
                           >
                             <FaTachometerAlt />
                             Dashboard
@@ -276,17 +272,17 @@ const Navbar = () => {
                           {auth.user.role === 'donor' && (
                             <p
                               onClick={() => setOpenDonorProfileModal(true)}
-                              className="border-b border-gray-300 hover:bg-gray-100 flex items-center gap-3 p-3 cursor-pointer transition-[background]"
+                              className="flex cursor-pointer items-center gap-3 border-b border-gray-300 p-3 hover:bg-gray-100 transition-[background]"
                             >
                               <AiOutlineUser />
-                              Donor Account
+                              Fill Out Donor Account
                             </p>
                           )}
                         </>
                       )}
                       <p
                         onClick={handleLogout}
-                        className="border-b border-gray-300 hover:bg-gray-100 flex items-center gap-3 p-3 cursor-pointer transition-[background] rounded-b-md"
+                        className="cursor-pointer flex items-center gap-3 border-b border-gray-300 p-3 hover:bg-gray-100 transition-[background] rounded-b-md"
                       >
                         <MdLogout />
                         Logout
@@ -303,7 +299,7 @@ const Navbar = () => {
                     </Link>
                     <Link
                       to="/register"
-                      className="bg-sky-400 hover:bg-sky-500 transition-[background] text-sm rounded-md px-3 py-2 text-white"
+                      className="bg-orange-400 hover:bg-orange-500 transition-[background] text-sm rounded-md px-3 py-2 text-white"
                     >
                       Sign Up
                     </Link>

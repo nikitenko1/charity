@@ -34,9 +34,9 @@ const Overview = () => {
 
   useEffect(() => {
     getDataAPI('dashboard/home').then((res) => {
-      setDonor(res.data.donaturAktif);
-      setRegistry(res.data.pendaftarDonasi);
-      setEvents(res.data.jumlahEvent);
+      setDonor(res.data.donorActive);
+      setRegistry(res.data.registryDonation);
+      setEvents(res.data.numberEvent);
     });
   }, []);
 

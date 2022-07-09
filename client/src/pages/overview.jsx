@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { getDataAPI } from './../utils/fetchData';
 import NotFound from './../components/global/NotFound';
 import Layout from './../components/admin/Layout';
